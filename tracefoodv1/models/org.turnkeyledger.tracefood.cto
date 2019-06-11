@@ -1,0 +1,138 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+namespace org.turnkeyledger.tracefood
+
+concept Trace {
+    o DateTime timestamp
+    o Address location
+    --> Trader company
+}
+
+/**
+ * Status of an order
+ */
+enum OrderStatus {
+    o INITIATED
+    o CONFIRMED
+    o DELIVERING
+    o DELIVERED
+}
+
+/**
+ * A concept for a simple street address
+ */
+concept Address {
+    o String city optional
+    o String state optional
+    o String country
+    o String postalCode optional
+}
+
+concept Order {
+    o String commodityName optional
+    o String commodityQuantity optional
+}
+
+asset Commodity identified by productId {
+    o String productId
+    o String name
+    o String description optional
+    o DateTime productionDate
+    o DateTime expirationDate optional
+    o Trace[] trace
+    --> PO purchaseOrder optional
+    --> Trader owner
+    --> Trader issuer
+    o String boxId optional
+}
+
+asset Box identified by boxId {
+    o String boxId
+    --> Commodity[] itemList
+    o String name optional
+    o String description optional
+    o Trace[] trace
+    --> PO purchaseOrder optional
+    --> Trader owner
+    --> Trader issuer
+}
+
+asset PO identified by orderId {
+    o String orderId
+    o Order[] orderList
+    o OrderStatus orderStatus optional
+    --> Trader orderer
+    --> Trader vender
+}
+
+abstract participant Trader {
+    o String companyName
+    o Address address
+}
+
+participant Supplier identified by supplierId extends Trader {
+    o String supplierId
+}
+
+participant Restaurant identified by restauId extends Trader {
+    o String restauId
+}
+
+transaction InitiatePO {
+    o String orderId
+    o Order[] orderList
+    --> Trader orderer optional
+    --> Trader vender
+}
+
+transaction TransferCommodity {
+    --> Commodity commodity
+    --> Trader issuer
+    --> Trader newOwner
+    --> PO purchaseOrder optional
+    o Address shipperLocation
+}
+
+transaction MakeBox{
+  	o String boxId
+    --> Commodity[] itemList
+    o String name optional
+    o String description optional
+    --> Trader owner
+    --> Trader issuer
+    --> PO purchaseOrder optional
+}
+
+transaction TransferBox{
+    --> Box box
+    --> Trader issuer
+    --> Trader newOwner
+    o Address shipperLocation
+}
+
+transaction UnBox{
+    --> Box box
+    --> Trader owner
+    --> Trader issuer
+}
+
+transaction SetupDemo {
+}
+
+
