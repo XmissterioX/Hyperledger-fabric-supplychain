@@ -111,6 +111,10 @@ transaction InitiatePO {
     --> Trader vender
 }
 
+transaction AddTraceCrate {
+   o String crateId
+   o Trace trace
+}
 
 
 transaction TransferCommodity {

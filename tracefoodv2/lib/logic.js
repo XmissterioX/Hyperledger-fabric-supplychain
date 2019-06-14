@@ -1,3 +1,5 @@
+
+const namespace = "org.turnkeyledger.tracefood";
 /**
  * Track the trade of a commodity from one trader to another
  * @param {org.turnkeyledger.tracefood.TransferCommodity} trade - the trade to be processed
@@ -183,3 +185,28 @@ function makeBox (boxDetails) {
             return assetRegistry.update(boxDetails.box);
         });
   }
+
+  /**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.turnkeyledger.tracefood.AddTraceCrate} traceData - the trade to be processed
+ * @transaction
+ */
+async function AddTraceCrate (traceData) {
+    let crateId = traceData.crateId;
+    
+    let factory = await getFactory();
+    var NS = 'org.turnkeyledger.tracefood';
+    // var me = getCurrentParticipant();
+
+    const crateReg = await getAssetRegistry(namespace + '.Crate');  
+    var crate = crateReg.get(crateId);
+
+    var newTrace = factory.newConcept(NS, 'Trace');
+    newTrace = traceData.trace;
+    crate.trace.push(traceData.trace);
+
+    return getAssetRegistry(namespace + '.Crate')
+    .then(function (assetRegistry) {
+        return assetRegistry.update(crate.trace);
+  });
+ }
