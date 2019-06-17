@@ -21,7 +21,7 @@ namespace org.turnkeyledger.tracefood
 concept Trace {
     o DateTime timestamp
     o Address location optional
-    o String action
+    o String action default="INITIATED"
     o String description optional
     o String campanyInvolved optional
 }
@@ -80,9 +80,9 @@ asset Crate identified by crateId {
   o String name optional
   o String description optional
   o OrderStatus orderStatus default ="INITIATED" 
-  o Trace[] trace
-  --> Trader owner
-  --> Trader issuer
+  o Trace[] trace optional
+  --> Trader supplier optional
+  --> Trader restaurant
 }
 
 asset PO identified by orderId {
@@ -99,11 +99,11 @@ abstract participant Trader {
 }
 
 participant Supplier identified by supplierId extends Trader {
-    o String supplierId regex=/[S][1-9]+[-][a-zA-Z]+/
+    o String supplierId regex=/[S][1-9]+[-][a-zA-Z1-9]+/
 }
 
 participant Restaurant identified by restauId extends Trader {
-    o String restauId regex=/[R][1-9]+[-][a-zA-Z]+/
+    o String restauId regex=/[R][1-9]+[-][a-zA-Z1-9]+/
 }
 
 
@@ -140,6 +140,11 @@ transaction MakeBox{
     --> Trader owner
     --> Trader issuer
     --> PO purchaseOrder optional
+}
+  
+  transaction MakeCrate{
+  	o Crate crate
+  	o Trace trace
 }
 
 transaction TransferBox{
