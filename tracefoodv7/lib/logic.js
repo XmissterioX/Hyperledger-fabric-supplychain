@@ -108,13 +108,12 @@ async function MakeOrder (orderData) {
   order = orderData.order;
   order.supplier = me;
   
-  o
   
   return getAssetRegistry('org.turnkeyledger.tracefood.Order')
         .then(function (assetRegistry) {
             return assetRegistry.add(orderData.order);
         }).then(function(){
-            return 			     getAssetRegistry('org.turnkeyledger.tracefood.Crate')
+            return getAssetRegistry('org.turnkeyledger.tracefood.Crate')
         })
         .then(function (assetRegistry) {
             return assetRegistry.updateAll(order.crates);
@@ -135,10 +134,16 @@ function Acto(tx){
   let  crates = [];
   crates.push(tx.crate);
   tx.order.crates.push(tx.crate);
+  tx.crate.order = tx.order
   console.log(tx.order);
  return getAssetRegistry(namespace + '.Order')
     .then(function (assetRegistry) {
         return assetRegistry.update(tx.order);
-  });
+  }).then(function(){
+            return getAssetRegistry('org.turnkeyledger.tracefood.Crate')
+        })
+        .then(function (assetRegistry) {
+            return assetRegistry.update(tx.crate);
+        });
    
 }

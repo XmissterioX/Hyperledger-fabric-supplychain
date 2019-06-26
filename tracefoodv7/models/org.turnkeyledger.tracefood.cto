@@ -61,7 +61,7 @@ asset Crate identified by crateId {
   o String crateId
   o String name optional
   o String description optional
-  o String orderId optional
+  --> Order order optional
 }
 
 abstract participant Trader {
