@@ -93,13 +93,21 @@ transaction AddTraceCrate {
   transaction MakeOrder {
 	o Order order
 }
- /* transaction Acto {
+  transaction Acto {
   --> Order order
   --> Crate crate
-}*/
+}
   transaction Actom {
   --> Order order
   --> Crate[] crates
+}
+  
+  transaction AddTraceOrder {
+    o String orderId
+    o Address location optional
+    o String action
+    o String description optional
+    o String campanyInvolved optional
 }
 
 

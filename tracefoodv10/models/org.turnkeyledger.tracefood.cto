@@ -31,9 +31,9 @@ concept Trace {
  */
 enum OrderStatus {
     o INITIATED
-    o CONFIRMED
     o DELIVERING
     o DELIVERED
+  	o CONFIRMED
 }
 
 /**
@@ -48,8 +48,8 @@ concept Address {
 
 asset Order identified by orderId {
     o String orderId
-    o String commodityName optional
-    o String commodityQuantity optional
+    o String commodityName 
+    o String commodityQuantity 
     o OrderStatus orderStatus default ="INITIATED" 
     o Trace[] traces optional
     --> Crate[] crates optional
@@ -92,14 +92,31 @@ transaction AddTraceCrate {
   
   transaction MakeOrder {
 	o Order order
+  	o Trace trace
 }
- /* transaction Acto {
+  transaction Acto {
   --> Order order
   --> Crate crate
-}*/
+}
   transaction Actom {
   --> Order order
   --> Crate[] crates
+}
+  
+  transaction AddTraceOrder {
+    o String orderId
+    o Address location optional
+    o String action
+    o String description optional
+    o String campanyInvolved optional
+}
+  
+  transaction UpdateOrderState {
+	o String orderId
+}
+  
+  transaction ConfirmOrder {
+    o String orderId
 }
 
 

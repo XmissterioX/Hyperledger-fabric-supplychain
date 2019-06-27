@@ -1,21 +1,20 @@
 
 const namespace = "org.turnkeyledger.tracefood";
-/*
+
 /**
 * Track the trade of a commodity from one trader to another
 * @param {org.turnkeyledger.tracefood.MakeCrate} crateDetails - the trade to be processed
 * @transaction
-
+*/
 async function makeCrate (crateDetails) {
    
-  
     let factory = await getFactory();
     var NS = 'org.turnkeyledger.tracefood';
     var me = getCurrentParticipant();
 
     const crateReg = await getAssetRegistry(namespace + '.Crate');
   
-  	var newCrate = factory.newResource(NS, 'Crate', 			crateDetails.crate.crateId);
+  	var newCrate = factory.newResource(NS, 'Crate', crateDetails.crate.crateId);
   
   	newCrate = crateDetails.crate;
   
@@ -41,11 +40,6 @@ async function makeCrate (crateDetails) {
         return assetRegistry.add(newCrate);
   });
 }
-*/
-
-
-
-
 
   /**
  * Track the trade of a commodity from one trader to another
@@ -107,7 +101,24 @@ async function MakeOrder (orderData) {
   var order = factory.newResource(namespace, 'Order', 			          	  	orderData.order.orderId);
   order = orderData.order;
   order.supplier = me;
-  
+  if(orderData.crates == null) {
+  	order.crates = [];
+  } else {
+  	order.crates = orderData.crates;
+  }
+  var newTrace = factory.newConcept(namespace, 'Trace');
+    newTrace.timestamp = new Date();
+  	
+  	if (orderData.address != null) {
+    newTrace.location = orderData.address ;
+    } else {
+     newTrace.location = me.address;
+    }
+  	let  concepts = [];
+
+  	concepts.push(newTrace);
+
+  	order.traces = concepts;
   
   return getAssetRegistry('org.turnkeyledger.tracefood.Order')
         .then(function (assetRegistry) {
@@ -176,4 +187,71 @@ function Actom(tx){
             return assetRegistry.updateAll(crates);
         });
    
+}
+
+ /**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.turnkeyledger.tracefood.AddTraceOrder} traceData - the trade to be processed
+ * @transaction
+ */
+async function AddTraceOrder (traceData) {
+  	
+  	let orderId = traceData.orderId;
+    
+    let factory = await getFactory();
+    var NS = 'org.turnkeyledger.tracefood';
+    // var me = getCurrentParticipant();
+
+    const orderReg = await getAssetRegistry(namespace + '.Order');
+ 
+    var order = await orderReg.get(orderId);
+  	
+    var newTrace = factory.newConcept(NS, 'Trace');
+    newTrace.timestamp = new Date();
+	newTrace.action = traceData.action;
+  
+  	if(traceData.location != null) {
+    	newTrace.location = traceData.location;
+    }
+  	if(traceData.description != null) {
+    	newTrace.location = traceData.location;
+    }
+  	if(traceData.campanyInvolved != null) {
+    	newTrace.campanyInvolved = traceData.campanyInvolved;
+    }
+  console.log(newTrace);
+
+  	let  concepts = [];
+  
+  	if(order.traces == null) {
+    order.traces = [];
+    }
+  
+  	concepts = order.traces;
+
+  	concepts.push(newTrace);
+
+  	order.traces = concepts;
+    
+
+    return getAssetRegistry(namespace + '.Order')
+    .then(function (assetRegistry) {
+        return assetRegistry.update(order);
+  });
+ }
+
+/**
+     * Associate the Packcase to order
+     * @param {org.turnkeyledger.tracefood.ConfirmOrder} tx - the tx to be processed
+     * @transaction
+**/
+async function ConfirmOrder(tx){
+   let orderId = tx.orderId;
+    
+    let factory = await getFactory();
+    var NS = 'org.turnkeyledger.tracefood';
+    var me = getCurrentParticipant();
+    const orderReg = await getAssetRegistry(namespace + '.Order');
+  	var order = await orderReg.get(orderId);
+  	console.log(order.restaurant.getIdentifier());
 }

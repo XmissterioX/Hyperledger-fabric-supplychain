@@ -1,11 +1,11 @@
 
 const namespace = "org.turnkeyledger.tracefood";
-/*
+
 /**
 * Track the trade of a commodity from one trader to another
 * @param {org.turnkeyledger.tracefood.MakeCrate} crateDetails - the trade to be processed
 * @transaction
-
+*/
 async function makeCrate (crateDetails) {
    
   
@@ -41,7 +41,7 @@ async function makeCrate (crateDetails) {
         return assetRegistry.add(newCrate);
   });
 }
-*/
+
 
 
 
@@ -177,3 +177,55 @@ function Actom(tx){
         });
    
 }
+
+ /**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.turnkeyledger.tracefood.AddTraceOrder} traceData - the trade to be processed
+ * @transaction
+ */
+async function AddTraceOrder (traceData) {
+  	
+  	let orderId = traceData.orderId;
+    
+    let factory = await getFactory();
+    var NS = 'org.turnkeyledger.tracefood';
+    // var me = getCurrentParticipant();
+
+    const orderReg = await getAssetRegistry(namespace + '.Order');
+ 
+    var order = await orderReg.get(orderId);
+  	
+	
+    var newTrace = factory.newConcept(NS, 'Trace');
+    newTrace.timestamp = new Date();
+	newTrace.action = traceData.action;
+  
+  	if(traceData.location != null) {
+    	newTrace.location = traceData.location;
+    }
+  	if(traceData.description != null) {
+    	newTrace.location = traceData.location;
+    }
+  	if(traceData.campanyInvolved != null) {
+    	newTrace.campanyInvolved = traceData.campanyInvolved;
+    }
+  console.log(newTrace);
+
+  	let  concepts = [];
+  
+  	if(order.traces == null) {
+    order.traces = [];
+    }
+  
+  	concepts = order.traces;
+
+  	concepts.push(newTrace);
+
+  	order.traces = concepts;
+    
+
+    return getAssetRegistry(namespace + '.Order')
+    .then(function (assetRegistry) {
+        return assetRegistry.update(order);
+  });
+ }
