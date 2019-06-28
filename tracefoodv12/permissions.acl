@@ -1,0 +1,69 @@
+rule Supplier {
+    description: "Allow the member supplier read access"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Order"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule Restaurant {
+    description: "Allow the member Restaurant read access"
+    participant: "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Order"
+  	condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule OrderOwnerSupplier {
+    description: "Allow the owner of an Order total access"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: ALL
+    resource(v): "org.turnkeyledger.tracefood.Order"
+    condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule OrderOwnerRestaurant {
+    description: "Allow the owner of aa Order total access"
+    participant(m): "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ, UPDATE
+    resource(v): "org.turnkeyledger.tracefood.Order"
+    condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+
+rule EnableMakingOrderTransaction {
+description: "Enable Sellers to use list"
+participant: "org.turnkeyledger.tracefood.Supplier"
+operation: ALL
+resource: "org.turnkeyledger.tracefood.MakeOrder"
+action: ALLOW
+}
+
+
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
