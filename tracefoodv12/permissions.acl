@@ -1,5 +1,5 @@
-rule Supplier {
-    description: "Allow the member supplier read access"
+rule SupplierHATOrder {
+    description: "Allow each supplier member to read his own orders"
     participant: "org.turnkeyledger.tracefood.Supplier"
     operation: READ
     resource: "org.turnkeyledger.tracefood.Order"
@@ -7,8 +7,8 @@ rule Supplier {
     action: ALLOW
 }
 
-rule Restaurant {
-    description: "Allow the member Restaurant read access"
+rule RestaurantHATOrder {
+    description: "Allow each restaurant member to read his own orders"
     participant: "org.turnkeyledger.tracefood.Restaurant"
     operation: READ
     resource: "org.turnkeyledger.tracefood.Order"
@@ -16,8 +16,8 @@ rule Restaurant {
     action: ALLOW
 }
 
-rule OrderOwnerSupplier {
-    description: "Allow the owner of an Order total access"
+rule VehicleOwner {
+    description: "Allow the owner of a vehicle total access"
     participant(m): "org.turnkeyledger.tracefood.Supplier"
     operation: ALL
     resource(v): "org.turnkeyledger.tracefood.Order"
@@ -25,8 +25,8 @@ rule OrderOwnerSupplier {
     action: ALLOW
 }
 
-rule OrderOwnerRestaurant {
-    description: "Allow the owner of aa Order total access"
+rule VehicleOwnerr {
+    description: "Allow the owner of a vehicle total access"
     participant(m): "org.turnkeyledger.tracefood.Restaurant"
     operation: READ, UPDATE
     resource(v): "org.turnkeyledger.tracefood.Order"
@@ -35,8 +35,17 @@ rule OrderOwnerRestaurant {
 }
 
 
-rule EnableMakingOrderTransaction {
-description: "Enable Sellers to use list"
+rule SupplierHATRestaurant {
+    description: "Allow the member restaurant to read the restaurants list"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Restaurant"
+    action: ALLOW
+}
+
+
+rule SupplierHATMakeOrderFunction {
+description: "Allow the member supplier to call the function MakeOrder"
 participant: "org.turnkeyledger.tracefood.Supplier"
 operation: ALL
 resource: "org.turnkeyledger.tracefood.MakeOrder"
