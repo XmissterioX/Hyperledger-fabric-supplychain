@@ -92,7 +92,6 @@ transaction AddTraceCrate {
   
   transaction MakeOrder {
 	  o Order order
-  	o Trace trace
 }
   transaction Acto {
   --> Order order
