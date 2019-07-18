@@ -1,0 +1,78 @@
+rule SupplierHATOrder {
+    description: "Allow each supplier member to read his own orders"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Order"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RestaurantHATOrder {
+    description: "Allow each restaurant member to read his own orders"
+    participant: "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Order"
+  	condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule VehicleOwner {
+    description: "Allow the owner of a vehicle total access"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: ALL
+    resource(v): "org.turnkeyledger.tracefood.Order"
+    condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule VehicleOwnerr {
+    description: "Allow the owner of a vehicle total access"
+    participant(m): "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ, UPDATE
+    resource(v): "org.turnkeyledger.tracefood.Order"
+    condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+
+rule SupplierHATRestaurant {
+    description: "Allow the member restaurant to read the restaurants list"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Restaurant"
+    action: ALLOW
+}
+
+
+rule SupplierHATMakeOrderFunction {
+description: "Allow the member supplier to call the function MakeOrder"
+participant: "org.turnkeyledger.tracefood.Supplier"
+operation: ALL
+resource: "org.turnkeyledger.tracefood.MakeOrder"
+action: ALLOW
+}
+
+
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}

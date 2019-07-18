@@ -1,0 +1,124 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+namespace org.turnkeyledger.tracefood
+
+concept Trace {
+    o DateTime timestamp
+    o Address location optional
+    o String action default="INITIATED"
+    o String description optional
+    o String campanyInvolved optional
+}
+
+/**
+ * Status of an order
+ */
+enum OrderStatus {
+    o INITIATED
+    o DELIVERING
+    o DELIVERED
+  	o CONFIRMED
+}
+
+/**
+ * A concept for a simple street address
+ */
+concept Address {
+    o String city optional
+    o String state optional
+    o String country
+    o String postalCode optional
+}
+
+asset Order identified by orderId {
+    o String orderId
+    o String commodityName 
+    o String commodityQuantity 
+    o OrderStatus orderStatus default ="INITIATED" optional
+    o Trace[] traces optional
+    --> Crate[] crates optional
+    --> Trader supplier optional
+    --> Trader restaurant
+}
+
+asset Crate identified by crateId {
+  o String crateId
+  o String name optional
+  o String description optional
+  --> Trader supplier optional
+  --> Trader restaurant optional
+  --> Order order optional
+   o Boolean owned default = false optional
+}
+
+abstract participant Trader {
+    o String companyName
+    o Address address
+}
+
+participant Supplier identified by supplierId extends Trader {
+    o String supplierId regex=/[S][1-9]+[-][a-zA-Z1-9]+/
+}
+
+participant Restaurant identified by restauId extends Trader {
+    o String restauId regex=/[R][1-9]+[-][a-zA-Z1-9]+/
+}
+
+transaction AddTraceCrate {
+    o String crateId
+    o Address location optional
+    o String action
+    o String description optional
+    o String campanyInvolved optional
+}
+
+  transaction MakeCrate{
+  	o Crate crate
+}
+  
+  transaction MakeOrder {
+	o Order order
+}
+  transaction Acto {
+  --> Order order
+  --> Crate crate
+}
+  transaction Actom {
+  --> Order order
+  --> Crate[] crates
+}
+  
+  transaction AddTraceOrder {
+    o String orderId
+    o Address location optional
+    o String action
+    o String description optional
+    o String campanyInvolved optional
+}
+  
+  transaction UpdateOrderState {
+	o String orderId
+  	o OrderStatus orderStatus 
+}
+  
+  transaction ConfirmOrder {
+    o String orderId
+}
+
+
