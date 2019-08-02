@@ -1,0 +1,6 @@
+query CratesWithoutOrder {
+  description: "Returns all crates without order"
+  statement:  
+    SELECT  org.turnkeyledger.tracefood.Crate
+      WHERE   ( owned == _$owned )
+}

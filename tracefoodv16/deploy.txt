@@ -1,0 +1,18 @@
+composer archive create -t dir -n .
+composer network install --card PeerAdmin@hlfv1 --archiveFile tracefoodv16@0.0.16.bna
+composer network start --networkName tracefoodv16 --networkVersion 0.0.16 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
+composer card import --file networkadmin.card
+
+# create angular skeleton
+
+yo hyperledger-composer:angular
+
+(card: admin@tracefoodv16, existing API, no namespace)
+
+# starting the network
+
+npm start
+
+# browser test 
+
+http://localhost:4200

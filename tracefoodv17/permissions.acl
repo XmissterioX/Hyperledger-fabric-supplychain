@@ -1,0 +1,128 @@
+rule SupplierHATROrder {
+    description: "Allow each supplier member to read his own orders"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource(v): "org.turnkeyledger.tracefood.Order"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule SupplierHATCCrate {
+    description: "Allow each supplier member to create new crate"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: CREATE
+    resource: "org.turnkeyledger.tracefood.Crate"
+    action: ALLOW
+}
+
+rule SupplierHATCOrder {
+    description: "Allow each supplier member to create new order"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: CREATE
+    resource: "org.turnkeyledger.tracefood.Order"
+    action: ALLOW
+}
+
+rule SupplierHATRCrate {
+    description: "Allow each supplier member to read his own crates"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: ALL
+    resource(v): "org.turnkeyledger.tracefood.Crate"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RestaurantHATROrder {
+    description: "Allow each restaurant member to read his own orders"
+    participant(m): "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ
+    resource(v): "org.turnkeyledger.tracefood.Order"
+  	condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RestaurantHATRCrate {
+    description: "Allow each restaurant member to read his own crates"
+    participant(m): "org.turnkeyledger.tracefood.Restaurant"
+    operation: READ
+    resource(v): "org.turnkeyledger.tracefood.Crate"
+  	condition: (v.restaurant.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+
+rule SupplierHATRRestaurant {
+    description: "Allow the member restaurant to read the restaurants list"
+    participant: "org.turnkeyledger.tracefood.Supplier"
+    operation: READ
+    resource: "org.turnkeyledger.tracefood.Restaurant"
+    action: ALLOW
+}
+
+
+rule SupplierHATMakeOrderFunction {
+description: "Allow the member supplier to call the function MakeOrder"
+participant: "org.turnkeyledger.tracefood.Supplier"
+operation: ALL
+resource: "org.turnkeyledger.tracefood.MakeOrder"
+action: ALLOW
+}
+
+rule SupplierHATMakeCrateFunction {
+description: "Allow the member supplier to call the function MakeCrate"
+participant: "org.turnkeyledger.tracefood.Supplier"
+operation: ALL
+resource: "org.turnkeyledger.tracefood.MakeCrate"
+action: ALLOW
+}
+
+rule SupplierHATActom {
+description: "Allow the member supplier to call the function Actom"
+participant: "org.turnkeyledger.tracefood.Supplier"
+operation: ALL
+resource: "org.turnkeyledger.tracefood.Actom"
+action: ALLOW
+}
+
+rule SupplierHATUOrder {
+    description: "Allow each supplier member to update his own orders"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: UPDATE
+    resource(v): "org.turnkeyledger.tracefood.Order"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+rule SupplierHATUCrate {
+description: "Allow each supplier member to update his own crates"
+    participant(m): "org.turnkeyledger.tracefood.Supplier"
+    operation: UPDATE
+    resource(v): "org.turnkeyledger.tracefood.Crate"
+  	condition: (v.supplier.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+
+
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
