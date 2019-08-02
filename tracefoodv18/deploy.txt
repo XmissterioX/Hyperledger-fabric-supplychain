@@ -1,6 +1,6 @@
 composer archive create -t dir -n .
-composer network install --card PeerAdmin@hlfv1 --archiveFile tracefoodv17@0.0.17.bna
-composer network start --networkName tracefoodv17 --networkVersion 0.0.17 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
+composer network install --card PeerAdmin@hlfv1 --archiveFile tracefoodv18@0.0.18.bna
+composer network start --networkName tracefoodv18 --networkVersion 0.0.18 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
 composer card import --file networkadmin.card
 
 # create angular skeleton
